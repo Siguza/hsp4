@@ -75,7 +75,7 @@ static kern_return_t kext_load(struct kmod_info *ki, void *data)
 
     mach_vm_offset_t remap_addr;
     vm_prot_t cur, max;
-    kern_return_t ret = _mach_vm_remap(map, &remap_addr, SIZEOF_TASK, 0xfff, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, map, (mach_vm_address_t)kernel_task, false, &cur, &max, VM_INHERIT_NONE);
+    kern_return_t ret = _mach_vm_remap(map, &remap_addr, SIZEOF_TASK, 0xfff, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, map, (mach_vm_address_t)task, false, &cur, &max, VM_INHERIT_NONE);
     LOG("mach_vm_remap: %u", ret);
     if(ret != KERN_SUCCESS) return ret;
     LOG_PTR("remap_addr", remap_addr);
