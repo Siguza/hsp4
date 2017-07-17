@@ -9,6 +9,7 @@
 
 #if defined(TARGET_10_12_5)
 #   define OFF_MACH_VM_REMAP            0x1b4370
+#   define OFF_MACH_VM_WIRE             0x1b4470
 #   define OFF_GET_TASK_IPCSPACE        0x138c20
 #   define OFF_IPC_PORT_ALLOC_SPECIAL    0xd4e10
 #   define OFF_IPC_KOBJECT_SET           0xefd30
@@ -30,6 +31,7 @@ typedef vm_offset_t ipc_kobject_t;
 typedef natural_t   ipc_kobject_type_t;
 
 static kern_return_t (*_mach_vm_remap)(vm_map_t target, mach_vm_address_t *dst, mach_vm_size_t size, mach_vm_offset_t mask, int flags, vm_map_t source, mach_vm_address_t src, boolean_t copy, vm_prot_t *cur, vm_prot_t *mac, vm_inherit_t inherit);
+static kern_return_t (*_mach_vm_wire)(host_priv_t host, vm_map_t map, mach_vm_address_t addr, mach_vm_size_t size, vm_prot_t prot);
 static ipc_space_t   (*_get_task_ipcspace)(task_t t);
 static ipc_port_t    (*_ipc_port_alloc_special)(ipc_space_t space);
 static void          (*_ipc_kobject_set)(ipc_port_t port, ipc_kobject_t kobject, ipc_kobject_type_t type);
@@ -49,6 +51,8 @@ do \
 
 static kern_return_t kext_load(struct kmod_info *ki, void *data)
 {
+    kern_return_t ret;
+
     host_t host = host_priv_self();
     LOG_PTR("realhost", host);
     if(!host) return KERN_RESOURCE_SHORTAGE;
@@ -56,6 +60,7 @@ static kern_return_t kext_load(struct kmod_info *ki, void *data)
     uintptr_t base;
     for(base = ((uintptr_t)host) & 0xfffffffffff00000; *(uint32_t*)base != 0xfeedfacf; base -= 0x100000);
     _mach_vm_remap          = (void*)(base + OFF_MACH_VM_REMAP);
+    _mach_vm_wire           = (void*)(base + OFF_MACH_VM_WIRE);
     _get_task_ipcspace      = (void*)(base + OFF_GET_TASK_IPCSPACE);
     _ipc_port_alloc_special = (void*)(base + OFF_IPC_PORT_ALLOC_SPECIAL);
     _ipc_kobject_set        = (void*)(base + OFF_IPC_KOBJECT_SET);
@@ -75,10 +80,14 @@ static kern_return_t kext_load(struct kmod_info *ki, void *data)
 
     mach_vm_offset_t remap_addr;
     vm_prot_t cur, max;
-    kern_return_t ret = _mach_vm_remap(map, &remap_addr, SIZEOF_TASK, 0xfff, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, map, (mach_vm_address_t)task, false, &cur, &max, VM_INHERIT_NONE);
+    ret = _mach_vm_remap(map, &remap_addr, SIZEOF_TASK, 0xfff, VM_FLAGS_ANYWHERE | VM_FLAGS_RETURN_DATA_ADDR, map, (mach_vm_address_t)task, false, &cur, &max, VM_INHERIT_NONE);
     LOG("mach_vm_remap: %u", ret);
     if(ret != KERN_SUCCESS) return ret;
     LOG_PTR("remap_addr", remap_addr);
+
+    ret = _mach_vm_wire(host, map, remap_addr, SIZEOF_TASK, VM_PROT_READ | VM_PROT_WRITE);
+    LOG("mach_vm_wire: %u", ret);
+    if(ret != KERN_SUCCESS) return ret;
 
     ipc_port_t port = _ipc_port_alloc_special(space);
     LOG_PTR("port", port);
