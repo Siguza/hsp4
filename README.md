@@ -19,8 +19,8 @@ Installation should be clear, obviously requires SIP to be weakened/disabled.
 
 ## Technical background
 
-The kernel task port is a powerful thing, and is really useful for kernel-space research or exploit development/debugging.  
-Historically, while on iOS only a jailbreak would provide access to it, on macOS the root user has always been able obtain it via one way or another.  
+The kernel task port is a powerful thing, and is really useful for kernel-space research or exploit development/debugging. Historically, while on iOS only a jailbreak would provide access to it, on macOS the root user has always been able obtain it via one way or another.
+
 `task_for_pid` used to be the most straightforward such way - just pass a pid of `0` and you've got it. But Apple killed that way back in Snow Leopard already:
 
     kern_return_t task_for_pid(struct task_for_pid_args *args)
