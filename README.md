@@ -93,4 +93,5 @@ A few notes:
 - You have to pass `zone_map` as source, `kernel_map` will not work.
 - `mach_vm_wire` is quite a dirty hack since it increases the user wire count rather than the kernel one, but for now it works. `vm_map_wire` would be the proper way to go, but that would require the address to be page-aligned and the size to be page-rounded, which is tedious and which `mach_vm_wire` does for us.
 
-And that's pretty much all there is to it. Enjoy your tfp0! :)
+And that's pretty much all there is to it. Enjoy your tfp0! :)  
+(Also maybe check out [kern-utils](https://github.com/Siguza/ios-kern-utils), they can be built for macOS too. :P)
