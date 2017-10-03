@@ -83,6 +83,7 @@ In code, this looks about like this (error handling omitted):
         &dummy,
         VM_INHERIT_NONE
     );
+    // mach_vm_wire_external as of High Sierra
     mach_vm_wire(&realhost, kernel_map, remap_addr, sizeof(task_t), VM_PROT_READ | VM_PROT_WRITE);
     ipc_port_t port = ipc_port_alloc_special(ipc_space_kernel);
     ipc_kobject_set(port, remap_addr, IKOT_TASK);

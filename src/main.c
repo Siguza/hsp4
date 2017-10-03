@@ -85,11 +85,23 @@ static kern_return_t kext_load(struct kmod_info *ki, void *data)
     SYM(vm_map_copyout);
     SYM(mach_vm_deallocate);
     SYM(mach_vm_remap);
-    SYM(mach_vm_wire);
     SYM(ipc_port_alloc_special);
     SYM(ipc_port_dealloc_special);
     SYM(ipc_kobject_set);
     SYM(ipc_port_make_send);
+
+    // Renamed in High Sierra
+    uintptr_t addr = find_sym(base, "mach_vm_wire_external");
+    if(!addr)
+    {
+        addr = find_sym(base, "mach_vm_wire");
+        if(!addr)
+        {
+            return KERN_RESOURCE_SHORTAGE;
+        }
+    }
+    LOG_PTR("sym(mach_vm_wire)", addr);
+    _mach_vm_wire = (void*)addr;
 
     task_t task = kernel_task;
     LOG_PTR("kernel_task", task);
