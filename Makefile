@@ -1,6 +1,6 @@
 PKG = net.siguza.hsp4
 TARGET = hsp4
-KFWK = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Kernel.framework
+KFWK = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Kernel.framework
 FLG ?= -O2 -Wall -g -fno-builtin -fno-common -nostdinc -mkernel -DKERNEL -DKERNEL_PRIVATE -DDRIVER_PRIVATE -DAPPLE -DNeXT -I$(KFWK)/Headers -nostdlib -Wl,-kext -lkmod -lkmodc++ -lcc_kext $(CFLAGS)
 
 .PHONY: all clean
