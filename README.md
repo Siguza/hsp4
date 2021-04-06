@@ -1,8 +1,7 @@
 <table><tr><td>
-This project is archived and will not recieve further updates.  
-  
-For an explanation on why, see [this issue](https://github.com/Siguza/hsp4/issues/2#issuecomment-813787563).
-</td></tr></table>
+This project is archived and will not recieve further updates.<br><br>
+
+For an explanation on why, see [this issue](https://github.com/Siguza/hsp4/issues/2#issuecomment-813787563).</td></tr></table>
 
 # hsp4.kext
 
